@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
         // Share page titles with all views
         View::composer('*', function ($view) {
             // Default title
-            $pageTitle = 'ទំព័រដេប៊ូ - ប្រព័ន្ធគ្រប់គ្រងសម្ភារៈ';
+            $pageTitle = __('Dashboard') . ' - ' . __('Material Management System');
 
             // Get current route name if exists
             $routeName = optional(Route::current())->getName();
@@ -53,64 +53,64 @@ class AppServiceProvider extends ServiceProvider
             // Map route names to Khmer titles
             $titles = [
                 // Dashboard
-                'dashboard' => 'ទំព័រដេប៊ូ',
+                'dashboard' => __('Dashboard'),
 
                 // Materials
-                'materials.index' => 'បញ្ជីសម្ភារៈ',
-                'materials.create' => 'បង្កើតសម្ភារៈថ្មី',
-                'materials.show' => 'ព័ត៌មានសម្ភារៈ',
-                'materials.edit' => 'កែសម្ភារៈ',
+                'materials.index' => __('Material List'),
+                'materials.create' => __('Create New Material'),
+                'materials.show' => __('Material Details'),
+                'materials.edit' => __('Edit Material'),
 
                 // Users
-                'users.index' => 'បញ្ជីអ្នកប្រើប្រាស់',
-                'users.create' => 'បង្កើតអ្នកប្រើប្រាស់ថ្មី',
-                'users.show' => 'ព័ត៌មានអ្នកប្រើប្រាស់',
-                'users.edit' => 'កែអ្នកប្រើប្រាស់',
+                'users.index' => __('User List'),
+                'users.create' => __('Create New User'),
+                'users.show' => __('User Details'),
+                'users.edit' => __('Edit User'),
 
                 // Orders
-                'orders.index' => 'បញ្ជីការបញ្ជាទិញ',
-                'orders.create' => 'បង្កើតការបញ្ជាទិញថ្មី',
-                'orders.show' => 'ព័ត៌មានការបញ្ជាទិញ',
-                'orders.edit' => 'កែការបញ្ជាទិញ',
-                'orders.quick_create' => 'បញ្ជាទិញលឿន',
+                'orders.index' => __('Order List'),
+                'orders.create' => __('Create New Order'),
+                'orders.show' => __('Order Details'),
+                'orders.edit' => __('Edit Order'),
+                'orders.quick_create' => __('Quick Order'),
 
                 // Stock
-                'materials.stock.create_bulk' => 'បញ្ចូលស្តុក',
+                'materials.stock.create_bulk' => __('Add Stock'),
                 //add_stock
-                'create_bulk_stock' => 'បញ្ជាទិញចំនួន',
+                'create_bulk_stock' => __('Bulk Order'),
                 
                 // Invoices
-                'invoices.index' => 'បញ្ជីវិក្កយបត្រ',
-                'invoices.create' => 'បង្កើតវិក្កយបត្រថ្មី',
-                'invoices.show' => 'ព័ត៌មានវិក្កយបត្រ',
-                'invoices.edit' => 'កែវិក្កយបត្រ',
-                'invoices.print' => 'បោះពុម្ពវិក្កយបត្រ',
+                'invoices.index' => __('Invoice List'),
+                'invoices.create' => __('Create New Invoice'),
+                'invoices.show' => __('Invoice Details'),
+                'invoices.edit' => __('Edit Invoice'),
+                'invoices.print' => __('Print Invoice'),
 
                 // Purchases
-                'purchases.index' => 'បញ្ជីការទិញចូល',
-                'purchases.create' => 'កត់ត្រាការទិញចូល',
+                'purchases.index' => __('Purchase List'),
+                'purchases.create' => __('Record Purchase'),
 
                 // Suppliers
-                'suppliers.index' => 'បញ្ជីអ្នកផ្គត់ផ្គង់',
-                'suppliers.create' => 'បង្កើតអ្នកផ្គត់ផ្គង់ថ្មី',
-                'suppliers.show' => 'ព័ត៌មានអ្នកផ្គត់ផ្គង់',
-                'suppliers.edit' => 'កែប្រែអ្នកផ្គត់ផ្គង់',
+                'suppliers.index' => __('Supplier List'),
+                'suppliers.create' => __('Create New Supplier'),
+                'suppliers.show' => __('Supplier Details'),
+                'suppliers.edit' => __('Edit Supplier'),
 
                 // Authentication
-                'login' => 'ចូលប្រព័ន្ធ',
-                'register' => 'ចុះឈ្មោះ',
-                'password.request' => 'ស្នើសុំពាក្យសម្ងាត់ថ្មី',
-                'password.reset' => 'កំណត់ពាក្យសម្ងាត់ថ្មី',
-                'password.confirm' => 'បញ្ជាក់ពាក្យសម្ងាត់',
+                'login' => __('Login'),
+                'register' => __('Register'),
+                'password.request' => __('Request New Password'),
+                'password.reset' => __('Reset Password'),
+                'password.confirm' => __('Confirm Password'),
 
                 // Home/Welcome
-                'home' => 'ទំព័រដេប៊ូ',
-                'welcome' => 'ស្វាគមន៍',
+                'home' => __('Dashboard'),
+                'welcome' => __('Welcome'),
             ];
 
             // Set page title if route matches
             if ($routeName && array_key_exists($routeName, $titles)) {
-                $pageTitle = $titles[$routeName] . ' - ប្រព័ន្ធគ្រប់គ្រងសម្ភារៈ';
+                $pageTitle = $titles[$routeName] . ' - ' . __('Material Management System');
             }
 
             // Share with all views

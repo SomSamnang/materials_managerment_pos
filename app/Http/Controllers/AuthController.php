@@ -25,7 +25,12 @@ class AuthController extends Controller
         // Attempt login using 'name' instead of 'email'
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // prevent session fixation
-            return redirect()->intended(route('dashboard'));
+            
+            if (auth()->user()->role === 'admin') {
+                return redirect()->intended(route('dashboard'));
+            }
+
+            return redirect()->intended(route('orders.index'));
         }
 
         // Login failed: return with error

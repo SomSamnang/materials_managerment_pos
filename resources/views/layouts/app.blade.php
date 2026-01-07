@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ $pageTitle ?? 'ប្រព័ន្ធគ្រប់គ្រងសម្ភារៈ' }}</title>
+<title>{{ $pageTitle ?? __('Material Management System') }}</title>
 
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -154,30 +154,33 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
 <div class="sidebar" id="sidebar">
     <a href="{{ route('dashboard') }}" class="sidebar-brand">
         <i class="bi bi-box-seam-fill"></i>
-        <span>ប្រព័ន្ធសម្ភារៈ</span>
+        <span>{{ __('Material System') }}</span>
     </a>
     
     <ul class="nav nav-pills flex-column mb-auto mt-2">
-        <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link @if(request()->routeIs('dashboard')) active @endif"><i class="bi bi-speedometer2"></i> ទំព័រដេប៊ូ</a></li>
-        <li class="nav-item"><a href="{{ route('materials.index') }}" class="nav-link @if(request()->routeIs('materials.*')) active @endif"><i class="bi bi-card-checklist"></i> បញ្ជីសម្ភារៈ</a></li>
-        <li class="nav-item"><a href="{{ route('materials.stock.create_bulk') }}" class="nav-link @if(request()->routeIs('materials.stock.create_bulk')) active @endif"><i class="bi bi-box-arrow-in-down"></i> បញ្ចូលស្តុក</a></li>
-        <li class="nav-item"><a href="{{ route('purchases.index') }}" class="nav-link @if(request()->routeIs('purchases.*')) active @endif"><i class="bi bi-cash-coin"></i> ការទិញចូល (Purchases)</a></li>
-        <li class="nav-item"><a href="{{ route('suppliers.index') }}" class="nav-link @if(request()->routeIs('suppliers.*')) active @endif"><i class="bi bi-truck"></i> អ្នកផ្គត់ផ្គង់ (Suppliers)</a></li>
-        <li class="nav-item"><a href="{{ route('orders.quick_create') }}" class="nav-link @if(request()->routeIs('orders.quick_create')) active @endif"><i class="bi bi-rocket-takeoff-fill"></i> បញ្ជាទិញលឿន</a></li>
-        <li class="nav-item"><a href="{{ route('orders.index') }}" class="nav-link @if(request()->routeIs('orders.*')) active @endif"><i class="bi bi-receipt"></i> អ្នកបញ្ជាទិញ / Orders</a></li>
-        <li class="nav-item"><a href="{{ route('invoices.index') }}" class="nav-link @if(request()->routeIs('invoices.*')) active @endif"><i class="bi bi-file-earmark-text"></i> វិក្កយបត្រ / Invoices</a></li>
+        <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link @if(request()->routeIs('dashboard')) active @endif"><i class="bi bi-speedometer2"></i> {{ __('Dashboard') }}</a></li>
+        <li class="nav-item"><a href="{{ route('materials.index') }}" class="nav-link @if(request()->routeIs('materials.*')) active @endif"><i class="bi bi-card-checklist"></i> {{ __('Material List') }}</a></li>
+        <li class="nav-item"><a href="{{ route('materials.stock.create_bulk') }}" class="nav-link @if(request()->routeIs('materials.stock.create_bulk')) active @endif"><i class="bi bi-box-arrow-in-down"></i> {{ __('Add Stock') }}</a></li>
+        <li class="nav-item"><a href="{{ route('purchases.index') }}" class="nav-link @if(request()->routeIs('purchases.*')) active @endif"><i class="bi bi-cash-coin"></i> {{ __('Purchases') }}</a></li>
+        <li class="nav-item"><a href="{{ route('suppliers.index') }}" class="nav-link @if(request()->routeIs('suppliers.*')) active @endif"><i class="bi bi-truck"></i> {{ __('Suppliers') }}</a></li>
+        <li class="nav-item"><a href="{{ route('orders.quick_create') }}" class="nav-link @if(request()->routeIs('orders.quick_create')) active @endif"><i class="bi bi-rocket-takeoff-fill"></i> {{ __('Quick Order') }}</a></li>
+        <li class="nav-item"><a href="{{ route('orders.index') }}" class="nav-link @if(request()->routeIs('orders.*')) active @endif"><i class="bi bi-receipt"></i> {{ __('Orders') }}</a></li>
+        <li class="nav-item"><a href="{{ route('invoices.index') }}" class="nav-link @if(request()->routeIs('invoices.*')) active @endif"><i class="bi bi-file-earmark-text"></i> {{ __('Invoices') }}</a></li>
         
-        <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link @if(request()->routeIs('users.*')) active @endif"><i class="bi bi-people"></i> អ្នកប្រើប្រាស់</a></li>
+        <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link @if(request()->routeIs('users.*')) active @endif"><i class="bi bi-people"></i> {{ __('Users') }}</a></li>
+        @if(auth()->user()->role === 'admin')
+        <li class="nav-item"><a href="{{ route('settings.edit') }}" class="nav-link @if(request()->routeIs('settings.*')) active @endif"><i class="bi bi-gear"></i> {{ __('Settings') }}</a></li>
+        @endif
     </ul>
 
     <div class="sidebar-footer">
         <form action="{{ route('logout') }}" method="POST" class="w-100 text-center">
             @csrf
-            <button type="submit" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2" title="Logout">
-                <i class="bi bi-box-arrow-right"></i> ចាកចេញ
+            <button type="submit" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2" title="{{ __('Logout') }}">
+                <i class="bi bi-box-arrow-right"></i> {{ __('Logout') }}
             </button>
         </form>
-        <div class="text-center text-muted mt-3" style="font-size: 0.8rem;">© 2026 ប្រព័ន្ធសម្ភារៈ</div>
+        <div class="text-center text-muted mt-3" style="font-size: 0.8rem;">© 2026 {{ __('Material System') }}</div>
     </div>
 </div>
 
@@ -188,9 +191,19 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
             <button class="btn btn-light d-md-none" onclick="document.getElementById('sidebar').classList.toggle('show')">
                 <i class="bi bi-list fs-4"></i>
             </button>
-            <h4 class="fw-bold mb-0 text-dark">{{ $pageTitle ?? 'ទំព័រដេប៊ូ' }}</h4>
+            <h4 class="fw-bold mb-0 text-dark">{{ $pageTitle ?? __('Dashboard') }}</h4>
         </div>
         <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+                <button class="btn bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-currency-exchange text-success"></i>
+                    <span class="fw-medium text-secondary">{{ session('currency', 'USD') }}</span>
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg p-2 mt-2" style="border-radius: 12px;">
+                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'USD' ? 'active' : '' }}" href="{{ route('currency.switch', 'USD') }}">USD ($)</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'KHR' ? 'active' : '' }}" href="{{ route('currency.switch', 'KHR') }}">KHR (៛)</a></li>
+                </ul>
+            </div>
             <div class="bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2">
                 <i class="bi bi-clock text-primary"></i>
                 <span class="fw-medium text-secondary">{{ \Carbon\Carbon::now('Asia/Phnom_Penh')->format('h:i A | d M Y') }}</span>
@@ -206,13 +219,13 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
                     </div>
                 </div>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 mt-2" style="border-radius: 12px;">
-                    <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.75rem;">គណនី</h6></li>
-                    <li><a class="dropdown-item rounded-2 py-2 @if(request()->routeIs('profile.show')) active @endif" href="{{ route('profile.show') }}"><i class="bi bi-person me-2"></i> ប្រវត្តិរូប</a></li>
+                    <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.75rem;">{{ __('Account') }}</h6></li>
+                    <li><a class="dropdown-item rounded-2 py-2 @if(request()->routeIs('profile.show')) active @endif" href="{{ route('profile.show') }}"><i class="bi bi-person me-2"></i> {{ __('Profile') }}</a></li>
                     <li><hr class="dropdown-divider my-2"></li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="dropdown-item rounded-2 py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i> ចាកចេញ</button>
+                            <button type="submit" class="dropdown-item rounded-2 py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i> {{ __('Logout') }}</button>
                         </form>
                     </li>
                 </ul>

@@ -12,6 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,14 @@ use App\Http\Controllers\SupplierController;
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+// Language Switcher
+Route::get('language/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'kh'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('language.switch');
 
 /*
 |--------------------------------------------------------------------------
@@ -61,13 +70,20 @@ Route::middleware('auth')->group(function () {
         Route::post('/{material}/adjust-stock', [MaterialController::class, 'adjustStock'])->name('stock.adjust');
         Route::get('/stock/create-bulk', [MaterialController::class, 'createBulkStock'])->name('stock.create_bulk');
         Route::post('/stock/store-bulk', [MaterialController::class, 'storeBulkStock'])->name('stock.store_bulk');
+        Route::post('/bulk-status', [MaterialController::class, 'bulkUpdateStatus'])->name('bulk_status');
+        Route::get('/{material}', [MaterialController::class, 'show'])->name('show');
     });
 
     // Purchases
-    Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'destroy']);
+    Route::resource('purchases', PurchaseController::class);
 
     // Suppliers
     Route::resource('suppliers', SupplierController::class);
+
+    // Settings
+    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/currency/switch/{currency}', [SettingController::class, 'switchCurrency'])->name('currency.switch');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');

@@ -20,8 +20,10 @@ class OrderController extends Controller
         $query = Order::with('user', 'materials');
 
         if ($search) {
-            $query->where('status', 'like', "%{$search}%")
-                  ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
+            $query->where(function($q) use ($search) {
+                $q->where('status', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn($sub) => $sub->where('name', 'like', "%{$search}%"));
+            });
         }
 
         $orders = $query->orderByDesc('id')->paginate(10);
@@ -30,6 +32,7 @@ class OrderController extends Controller
             'pageTitle' => 'បញ្ជីអ្នកបញ្ជាទិញ',
             'orders' => $orders,
             'search' => $search,
+            'isAdmin' => auth()->user()->role === 'admin',
         ]);
     }
 /**
@@ -37,8 +40,12 @@ class OrderController extends Controller
  */
 public function quickCreate()
 {
-    $materials = Material::all();
-    $users = User::all();
+    $materials = Material::where('status', 'active')->get();
+    if (auth()->user()->role === 'admin') {
+        $users = User::all();
+    } else {
+        $users = User::where('id', auth()->id())->get();
+    }
 
     return view('orders.quick_create', [
         'pageTitle' => 'បញ្ជាទិញលឿន',
@@ -52,8 +59,12 @@ public function quickCreate()
      */
     public function create()
     {
-        $materials = Material::all();
-        $users = User::all();
+        $materials = Material::where('status', 'active')->get();
+        if (auth()->user()->role === 'admin') {
+            $users = User::all();
+        } else {
+            $users = User::where('id', auth()->id())->get();
+        }
 
         return view('orders.create', [
             'pageTitle' => 'បង្កើតអ្នកបញ្ជាទិញថ្មី',
@@ -80,6 +91,10 @@ public function quickCreate()
 
         // Replace request data with filtered data for validation
         $request->merge(['materials' => $materialsData]);
+
+        if (auth()->user()->role !== 'admin') {
+            $request->merge(['user_id' => auth()->id()]);
+        }
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -135,6 +150,10 @@ public function quickCreate()
      */
     public function show(Order $order)
     {
+        if (auth()->user()->role !== 'admin' && $order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to view this order.');
+        }
+
         $order->load('user', 'materials', 'invoice');
 
         return view('orders.show', [
@@ -148,8 +167,16 @@ public function quickCreate()
      */
     public function edit(Order $order)
     {
-        $materials = Material::all();
-        $users = User::all();
+        if (auth()->user()->role !== 'admin' && $order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to edit this order.');
+        }
+
+        $materials = Material::where('status', 'active')->get();
+        if (auth()->user()->role === 'admin') {
+            $users = User::all();
+        } else {
+            $users = User::where('id', auth()->id())->get();
+        }
 
         return view('orders.edit', [
             'pageTitle' => 'កែប្រែអ្នកបញ្ជាទិញ',
@@ -164,6 +191,14 @@ public function quickCreate()
      */
     public function update(Request $request, Order $order)
     {
+        if (auth()->user()->role !== 'admin' && $order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to update this order.');
+        }
+
+        if (auth()->user()->role !== 'admin') {
+            $request->merge(['user_id' => auth()->id()]);
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'status' => 'required|in:pending,completed,cancelled',
@@ -218,6 +253,10 @@ public function quickCreate()
      */
     public function destroy(Order $order)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to delete orders.');
+        }
+
         $order->materials()->detach();
         if ($order->invoice) {
             $order->invoice->delete();

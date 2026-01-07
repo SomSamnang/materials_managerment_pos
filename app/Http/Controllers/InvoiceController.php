@@ -17,6 +17,12 @@ class InvoiceController extends Controller
 
         $query = Invoice::with('order.user');
 
+        if (auth()->user()->role !== 'admin') {
+            $query->whereHas('order', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+
         if ($search) {
             $query->where('invoice_number', 'like', "%{$search}%")
                   ->orWhereHas('order.user', function($q) use ($search) {
@@ -38,7 +44,11 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        $orders = Order::whereDoesntHave('invoice')->get();
+        $query = Order::whereDoesntHave('invoice');
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+        $orders = $query->get();
 
         return view('invoices.create', [
             'pageTitle' => 'បង្កើតវិក្កយបត្រថ្មី',
@@ -57,6 +67,10 @@ class InvoiceController extends Controller
 
         $order = Order::find($request->order_id);
 
+        if (auth()->user()->role !== 'admin' && $order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to create an invoice for this order.');
+        }
+
         Invoice::create([
             'order_id' => $order->id,
             'total_amount_usd' => $order->total_amount_usd,
@@ -73,6 +87,10 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin' && $invoice->order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to view this invoice.');
+        }
+
         $invoice->load('order.user', 'order.materials');
 
         return view('invoices.show', [
@@ -86,6 +104,10 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to edit invoices.');
+        }
+
         return view('invoices.edit', [
             'pageTitle' => 'កែប្រែវិក្កយបត្រ',
             'invoice' => $invoice,
@@ -97,6 +119,10 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to update invoices.');
+        }
+
         $request->validate([
             'status' => 'required|in:unpaid,paid,overdue',
             'due_date' => 'nullable|date',
@@ -112,6 +138,10 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'You are not authorized to delete invoices.');
+        }
+
         $invoice->delete();
 
         return redirect()->route('invoices.index')->with('success', 'Invoice deleted successfully.');
@@ -122,6 +152,10 @@ class InvoiceController extends Controller
      */
     public function print(Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin' && $invoice->order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to print this invoice.');
+        }
+
         $invoice->load('order.user', 'order.materials');
 
         return view('invoices.print', [
@@ -134,6 +168,10 @@ class InvoiceController extends Controller
      */
     public function accept(Invoice $invoice)
     {
+        if (auth()->user()->role !== 'admin' && $invoice->order->user_id !== auth()->id()) {
+            abort(403, 'You are not authorized to accept this invoice.');
+        }
+
         $invoice->update(['status' => 'accepted']);
 
         return redirect()->back()->with('success', 'Invoice accepted successfully.');

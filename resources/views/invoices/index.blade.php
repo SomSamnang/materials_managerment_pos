@@ -67,7 +67,7 @@
                                     <i class="bi bi-printer"></i>
                                 </a>
                                 <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-warning" title="កែប្រែ">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil-square"></i> 
                                 </a>
                                 <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="d-inline">
                                     @csrf

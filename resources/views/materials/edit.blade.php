@@ -22,9 +22,9 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>កែប្រែសម្ភារៈ</h4>
+            <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>{{ __('Edit Material') }}</h4>
             <a href="{{ route('materials.index') }}" class="btn btn-light btn-sm">
-                <i class="bi bi-arrow-left"></i> ត្រឡប់ក្រោយ
+                <i class="bi bi-arrow-left"></i> {{ __('Back') }}
             </a>
         </div>
 
@@ -33,7 +33,7 @@
                 <div class="alert alert-warning d-flex align-items-center" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <div>
-                        <strong>ស្តុកទាប!</strong> ចំនួនស្តុកបច្ចុប្បន្ន ({{ $material->stock }}) គឺទាបជាងចំនួនអប្បបរមា ({{ $material->min_stock }})។
+                        <strong>{{ __('Low Stock') }}!</strong> {{ __('Current stock (:current) is lower than minimum stock (:min).', ['current' => $material->stock, 'min' => $material->min_stock]) }}
                     </div>
                 </div>
             @endif
@@ -46,37 +46,37 @@
 
                     {{-- Code --}}
                     <div class="col-md-6">
-                        <label class="form-label">កូដ</label>
+                        <label class="form-label">{{ __('Code') }}</label>
                         <input type="text" name="code" class="form-control" value="{{ old('code', $material->code) }}" required readonly>
                     </div>
 
                     {{-- Name --}}
                     <div class="col-md-6">
-                        <label class="form-label">ឈ្មោះ</label>
+                        <label class="form-label">{{ __('Name') }}</label>
                         <input type="text" name="name" class="form-control" value="{{ old('name', $material->name) }}" required>
                     </div>
 
                     {{-- Stock --}}
                     <div class="col-md-4">
-                        <label class="form-label">ស្តុក</label>
+                        <label class="form-label">{{ __('Stock') }}</label>
                         <input type="number" id="stock" name="stock" class="form-control" value="{{ old('stock', $material->stock) }}" min="0" required>
                     </div>
 
                     {{-- Minimum Stock --}}
                     <div class="col-md-4">
-                        <label class="form-label">ចំនួនស្តុកអប្បបរមា</label>
+                        <label class="form-label">{{ __('Min Stock Quantity') }}</label>
                         <input type="number" name="min_stock" class="form-control" value="{{ old('min_stock', $material->min_stock) }}" min="0" required>
                     </div>
 
                     {{-- Price --}}
                     <div class="col-md-4">
-                        <label class="form-label">តម្លៃឯកតា ($)</label>
+                        <label class="form-label">{{ __('Unit Price') }} ($)</label>
                         <input type="number" id="price" step="0.01" name="price" class="form-control" value="{{ old('price', $material->price) }}" required>
                     </div>
 
                     {{-- Image --}}
                     <div class="col-md-6">
-                        <label class="form-label">រូបភាព</label>
+                        <label class="form-label">{{ __('Image') }}</label>
                         <input type="file" name="image" class="form-control">
                         @if($material->image)
                             <img src="{{ asset('storage/'.$material->image) }}" width="100" class="mt-2 rounded shadow-sm">
@@ -85,14 +85,14 @@
 
                     {{-- Description --}}
                     <div class="col-md-6">
-                        <label class="form-label">ពិពណ៌នា</label>
+                        <label class="form-label">{{ __('Description') }}</label>
                         <textarea name="description" class="form-control" rows="4">{{ old('description', $material->description) }}</textarea>
                     </div>
 
                     {{-- Total Price Display --}}
                     <div class="col-md-12 mt-3">
                         <div class="alert alert-info d-flex justify-content-between align-items-center">
-                            <strong>តម្លៃសរុប៖</strong>
+                            <strong>{{ __('Total Price') }}:</strong>
                             <div>
                                 <span id="totalUSD">${{ number_format($material->stock * $material->price, 2) }}</span> |
                                 <span id="totalKHR">{{ number_format($material->stock * $material->price * 4100) }} ៛</span>
@@ -104,12 +104,12 @@
 
                 {{-- Submit --}}
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-success"><i class="bi bi-save2 me-1"></i> រក្សាទុកការផ្លាស់ប្តូរ</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-save2 me-1"></i> {{ __('Save Changes') }}</button>
                     <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#stockModal" data-type="in">
-                        <i class="bi bi-plus-circle me-1"></i> បញ្ចូលស្តុក
+                        <i class="bi bi-plus-circle me-1"></i> {{ __('Add Stock') }}
                     </button>
                     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#stockModal" data-type="out">
-                        <i class="bi bi-dash-circle me-1"></i> ដកស្តុក
+                        <i class="bi bi-dash-circle me-1"></i> {{ __('Remove Stock') }}
                     </button>
                 </div>
 
@@ -126,23 +126,23 @@
       <form action="{{ route('materials.stock.adjust', $material->id) }}" method="POST">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="stockModalLabel">កែប្រែស្តុក</h5>
+          <h5 class="modal-title" id="stockModalLabel">{{ __('Adjust Stock') }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <input type="hidden" name="type" id="stock-type">
             <div class="mb-3">
-                <label for="quantity" class="form-label">បរិមាណ</label>
+                <label for="quantity" class="form-label">{{ __('Quantity') }}</label>
                 <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
             </div>
             <div class="mb-3">
-                <label for="notes" class="form-label">កំណត់ចំណាំ (ស្រេចចិត្ត)</label>
+                <label for="notes" class="form-label">{{ __('Notes (Optional)') }}</label>
                 <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">បិទ</button>
-          <button type="submit" class="btn btn-primary">រក្សាទុក</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
+          <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
         </div>
       </form>
     </div>
@@ -179,13 +179,13 @@
             const submitButton = stockModal.querySelector('form button[type=submit]');
 
             if (type === 'in') {
-                modalTitle.textContent = 'បញ្ចូលស្តុក (Add Stock)';
+                modalTitle.textContent = '{{ __('Add Stock') }}';
                 submitButton.className = 'btn btn-primary';
-                submitButton.innerHTML = '<i class="bi bi-plus-circle me-1"></i> បញ្ចូលស្តុក';
+                submitButton.innerHTML = '<i class="bi bi-plus-circle me-1"></i> {{ __('Add Stock') }}';
             } else {
-                modalTitle.textContent = 'ដកស្តុក (Remove Stock)';
+                modalTitle.textContent = '{{ __('Remove Stock') }}';
                 submitButton.className = 'btn btn-danger';
-                submitButton.innerHTML = '<i class="bi bi-dash-circle me-1"></i> ដកស្តុក';
+                submitButton.innerHTML = '<i class="bi bi-dash-circle me-1"></i> {{ __('Remove Stock') }}';
             }
 
             typeInput.value = type;

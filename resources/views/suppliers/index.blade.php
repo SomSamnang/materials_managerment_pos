@@ -41,7 +41,7 @@
                                 <td>{{ $supplier->email ?? '-' }}</td>
                                 <td>{{ Str::limit($supplier->address, 30) ?? '-' }}</td>
                                 <td class="text-end">
-                                    <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                    <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i> </a>
                                     <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline" onsubmit="return confirm('តើអ្នកពិតជាចង់លុបមែនទេ?');">
                                         @csrf
                                         @method('DELETE')

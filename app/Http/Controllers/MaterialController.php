@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Material;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class MaterialController extends Controller
 {
@@ -14,14 +15,34 @@ class MaterialController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%$search%")
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
                   ->orWhere('code', 'like', "%$search%");
+            });
         }
 
-        $materials = $query->orderBy('id', 'desc')->get();
-        $lowStockCount = $materials->where('stock', '<', 'min_stock')->count();
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
 
-        return view('materials.index', compact('materials', 'lowStockCount'));
+        // Calculate Grand Total (All Pages)
+        $grandTotalQuery = clone $query;
+        $grandTotalUSD = $grandTotalQuery->sum(DB::raw('stock * price'));
+        $grandTotalKHR = $grandTotalUSD * 4100;
+
+        // Sorting Logic
+        $sort = $request->get('sort', 'id');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['id', 'code', 'name', 'status', 'stock', 'price', 'created_at'];
+
+        if (!in_array($sort, $allowedSorts)) $sort = 'id';
+        if (!in_array($direction, ['asc', 'desc'])) $direction = 'desc';
+
+        $materials = $query->orderBy($sort, $direction)->paginate(15)->withQueryString();
+
+        $lowStockCount = Material::whereColumn('stock', '<', 'min_stock')->count();
+
+        return view('materials.index', compact('materials', 'lowStockCount', 'grandTotalUSD', 'grandTotalKHR'));
     }
 
     public function create()
@@ -55,6 +76,11 @@ class MaterialController extends Controller
         Material::create($data);
 
         return redirect()->route('materials.index')->with('success', 'សម្ភារៈត្រូវបានបន្ថែមដោយជោគជ័យ!');
+    }
+
+    public function show(Material $material)
+    {
+        return view('materials.show', compact('material'));
     }
 
     public function edit(Material $material)
@@ -186,5 +212,21 @@ class MaterialController extends Controller
         }
 
         return redirect()->route('materials.index')->with('success', 'បានបញ្ចូលស្តុកដោយជោគជ័យ។');
+    }
+
+    /**
+     * Bulk update status for materials.
+     */
+    public function bulkUpdateStatus(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:materials,id',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        Material::whereIn('id', $request->ids)->update(['status' => $request->status]);
+
+        return back()->with('success', 'ស្ថានភាពសម្ភារៈត្រូវបានកែប្រែជាក្រុមដោយជោគជ័យ។');
     }
 }

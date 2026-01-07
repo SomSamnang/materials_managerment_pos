@@ -24,6 +24,7 @@ class Material extends Model
         'total_riel',
         'image',
         'description',
+        'status',
     ];
 
     /**

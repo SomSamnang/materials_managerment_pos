@@ -61,16 +61,20 @@
                                 <a href="{{ route('orders.show', $order) }}" class="btn btn-sm btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('orders.edit', $order) }}" class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form action="{{ route('orders.destroy', $order) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('តើអ្នកប្រាកដទេ?')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
+                                @if($isAdmin || $order->user_id === auth()->id())
+                                    <a href="{{ route('orders.edit', $order) }}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil-square"></i> 
+                                    </a>
+                                @endif
+                                @if($isAdmin)
+                                    <form action="{{ route('orders.destroy', $order) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('តើអ្នកប្រាកដទេ?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

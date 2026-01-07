@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Models\Purchase;
 use App\Models\Supplier;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -17,39 +18,80 @@ class DashboardController extends Controller
      */
     public function dashboard(Request $request)
     {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->route('orders.index');
+        }
+
         $search = $request->get('search');
+        $status = $request->get('status');
+        $user = auth()->user();
+        $isAdmin = $user->role === 'admin';
 
         // ======================
         // MATERIALS
         // ======================
         $materialsQuery = Material::query();
 
+        if (!$isAdmin) {
+            $materialsQuery->where('status', 'active');
+        }
+
         if ($search) {
-            $materialsQuery->where('name', 'like', "%{$search}%")
-                           ->orWhere('code', 'like', "%{$search}%");
+            $materialsQuery->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($status && $status !== 'all') {
+            if ($status === 'low_stock') {
+                $materialsQuery->whereColumn('stock', '<=', 'min_stock');
+            } else {
+                $materialsQuery->where('status', $status);
+            }
         }
 
         $materials = $materialsQuery->orderByDesc('id')->get();
 
-        $totalMaterials = Material::count();
-        $lowStockCount  = Material::whereColumn('stock', '<=', 'min_stock')->count();
-        $totalStock     = Material::sum('stock');
+        if ($isAdmin) {
+            $totalMaterials = Material::count();
+            $lowStockCount  = Material::whereColumn('stock', '<=', 'min_stock')->count();
+            $totalStock     = Material::sum('stock');
+        } else {
+            $totalMaterials = Material::where('status', 'active')->count();
+            $lowStockCount  = Material::where('status', 'active')->whereColumn('stock', '<=', 'min_stock')->count();
+            $totalStock     = Material::where('status', 'active')->sum('stock');
+        }
 
         // Total price of all materials using total_usd / total_riel
         $totalPriceUSD = $materials->sum(fn($m) => $m->total_usd ?? ($m->stock * $m->price));
-        $exchangeRate  = 4100;
-        $totalPriceKHR = $materials->sum(fn($m) => $m->total_riel ?? (($m->total_usd ?? ($m->stock * $m->price)) * $exchangeRate));
+        
+        // Dynamic Currency Logic
+        $exchangeRate = Setting::getExchangeRate();
+        $currency = session('currency', 'USD');
+        $currencySymbol = $currency === 'KHR' ? '៛' : '$';
+        $decimals = $currency === 'KHR' ? 0 : 2;
+
+        // Calculate Total Material Price based on currency
+        $totalMaterialPrice = $currency === 'KHR' 
+            ? $totalPriceUSD * $exchangeRate 
+            : $totalPriceUSD;
 
         // ======================
         // ORDERS
         // ======================
-        $totalOrders      = Order::count();
-        $pendingOrders    = Order::where('status', 'pending')->count();
-        $completedOrders  = Order::where('status', 'completed')->count();
-        $cancelledOrders  = Order::where('status', 'cancelled')->count();
+        $ordersQuery = Order::query();
+        if (!$isAdmin) {
+            $ordersQuery->where('user_id', $user->id);
+        }
+
+        $totalOrders      = (clone $ordersQuery)->count();
+        $pendingOrders    = (clone $ordersQuery)->where('status', 'pending')->count();
+        $completedOrders  = (clone $ordersQuery)->where('status', 'completed')->count();
+        $cancelledOrders  = (clone $ordersQuery)->where('status', 'cancelled')->count();
 
         // Calculate total order amounts dynamically
-        $totalOrderPriceUSD = Order::with('materials')->get()->sum(function($order){
+        $totalOrderPriceUSD = (clone $ordersQuery)->with('materials')->get()->sum(function($order){
             return $order->materials->sum(fn($m) => $m->pivot->quantity * $m->pivot->unit_price_usd);
         });
         $totalOrderPriceKHR = $totalOrderPriceUSD * $exchangeRate;
@@ -57,25 +99,45 @@ class DashboardController extends Controller
         // ======================
         // INVOICES
         // ======================
-        $totalInvoices    = Invoice::count();
-        $paidInvoices     = Invoice::where('status', 'paid')->count();
-        $unpaidInvoices   = Invoice::where('status', 'unpaid')->count();
-        $acceptedInvoices = Invoice::where('status', 'accepted')->count();
-        $overdueInvoices  = Invoice::where('status', 'overdue')->count();
+        $invoicesQuery = Invoice::query();
+        if (!$isAdmin) {
+            $invoicesQuery->whereHas('order', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
+        $totalInvoices    = (clone $invoicesQuery)->count();
+        $paidInvoices     = (clone $invoicesQuery)->where('status', 'paid')->count();
+        $unpaidInvoices   = (clone $invoicesQuery)->where('status', 'unpaid')->count();
+        $acceptedInvoices = (clone $invoicesQuery)->where('status', 'accepted')->count();
+        $overdueInvoices  = (clone $invoicesQuery)->where('status', 'overdue')->count();
 
         // ======================
         // PURCHASES & SUPPLIERS
         // ======================
-        $totalPurchases    = Purchase::count();
-        $totalPurchaseCost = Purchase::sum('total_cost');
-        $totalSuppliers    = Supplier::count();
+        if ($isAdmin) {
+            $totalPurchases    = Purchase::count();
+            $totalPurchaseCostUSD = Purchase::sum('total_cost');
+            $totalSuppliers    = Supplier::count();
+        } else {
+            $totalPurchases = 0;
+            $totalPurchaseCostUSD = 0;
+            $totalSuppliers = 0;
+        }
+        $totalPurchaseCost = $currency === 'KHR' ? $totalPurchaseCostUSD * $exchangeRate : $totalPurchaseCostUSD;
 
         // ======================
         // USERS
         // ======================
-        $totalUsers  = User::count();
-        $totalAdmins = User::where('role', 'admin')->count();
-        $totalRegularUsers = $totalUsers - $totalAdmins;
+        if ($isAdmin) {
+            $totalUsers  = User::count();
+            $totalAdmins = User::where('role', 'admin')->count();
+            $totalRegularUsers = $totalUsers - $totalAdmins;
+        } else {
+            $totalUsers = 0;
+            $totalAdmins = 0;
+            $totalRegularUsers = 0;
+        }
 
         // ======================
         // Return dashboard view
@@ -88,9 +150,11 @@ class DashboardController extends Controller
             'totalUsers',
             'totalAdmins',
             'totalRegularUsers',
-            'totalPriceUSD',
-            'totalPriceKHR',
+            'totalMaterialPrice',
+            'currencySymbol',
+            'decimals',
             'search',
+            'status',
 
             // Orders stats
             'totalOrders',
@@ -110,7 +174,8 @@ class DashboardController extends Controller
             // Purchases & Suppliers
             'totalPurchases',
             'totalPurchaseCost',
-            'totalSuppliers'
+            'totalSuppliers',
+            'isAdmin'
         ));
     }
 
