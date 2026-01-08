@@ -4,8 +4,8 @@
 <div class="container-fluid">
     {{-- Page Header --}}
     <div class="mb-4">
-        <h1 class="h3 fw-bold"><i class="bi bi-rocket-takeoff-fill text-primary me-2"></i>បញ្ជាទិញលឿន / Quick Order</h1>
-        <p class="text-muted">បង្កើតបញ្ជាទិញថ្មីដោយប្រើសម្ភារៈដែលមានក្នុងស្តុក</p>
+        <h1 class="h3 fw-bold"><i class="bi bi-rocket-takeoff-fill text-primary me-2"></i>{{ __('Quick Order') }}</h1>
+        <p class="text-muted">{{ __('Create a new order using materials in stock') }}</p>
     </div>
 
     {{-- Flash Messages --}}
@@ -35,9 +35,9 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center p-3">
-                        <h5 class="mb-0"><i class="bi bi-boxes text-primary me-2"></i>សម្ភារៈ / Materials</h5>
+                        <h5 class="mb-0"><i class="bi bi-boxes text-primary me-2"></i>{{ __('Materials') }}</h5>
                         <div class="w-50">
-                            <input type="text" id="material-search" class="form-control" placeholder="ស្វែងរកតាមឈ្មោះ ឬកូដ...">
+                            <input type="text" id="material-search" class="form-control" placeholder="{{ __('Search by name or code...') }}">
                         </div>
                     </div>
                     <div class="card-body p-0" style="max-height: 65vh; overflow-y: auto;">
@@ -46,10 +46,10 @@
                                 <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                                     <tr>
                                         <th>#</th>
-                                        <th class="text-start">ឈ្មោះ</th>
-                                        <th class="text-nowrap">ស្តុក</th>
-                                        <th class="text-nowrap">តម្លៃ (USD)</th>
-                                        <th style="width: 120px;">បរិមាណ</th>
+                                        <th class="text-start">{{ __('Name') }}</th>
+                                        <th class="text-nowrap">{{ __('Stock') }}</th>
+                                        <th class="text-nowrap">{{ __('Price') }} (USD)</th>
+                                        <th style="width: 120px;">{{ __('Quantity') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="materials-tbody">
@@ -74,7 +74,7 @@
                                             <td>
                                                 {{ $material->stock }}
                                                 @if($material->stock < $material->min_stock)
-                                                    <span class="badge bg-danger ms-1">ស្តុកទាប</span>
+                                                    <span class="badge bg-danger ms-1">{{ __('Low Stock') }}</span>
                                                 @endif
                                             </td>
                                             <td class="text-success fw-bold">${{ number_format($material->price, 2) }}</td>
@@ -97,29 +97,29 @@
                     {{-- Order Info Card --}}
                     <div class="card mb-4">
                         <div class="card-header bg-light border-0 p-3">
-                            <h5 class="mb-0"><i class="bi bi-person-check-fill text-primary me-2"></i>ព័ត៌មានលម្អិត</h5>
+                            <h5 class="mb-0"><i class="bi bi-person-check-fill text-primary me-2"></i>{{ __('Details') }}</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">ជ្រើសរើសអ្នកប្រើប្រាស់</label>
+                                <label class="form-label fw-bold">{{ __('Select User') }}</label>
                                 <select name="user_id" class="form-select" required>
-                                    <option value="">-- ជ្រើសរើសអ្នកប្រើប្រាស់ --</option>
+                                    <option value="">-- {{ __('Select User') }} --</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">ស្ថានភាព</label>
+                                <label class="form-label fw-bold">{{ __('Status') }}</label>
                                 <select name="status" class="form-select" required>
-                                    <option value="pending" selected>Pending / រងចាំ</option>
-                                    <option value="completed">Completed / បញ្ចប់</option>
-                                    <option value="cancelled">Cancelled / បោះបង់</option>
+                                    <option value="pending" selected>{{ __('Pending') }}</option>
+                                    <option value="completed">{{ __('Completed') }}</option>
+                                    <option value="cancelled">{{ __('Cancelled') }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="form-label fw-bold">កំណត់ចំណាំ</label>
-                                <textarea name="notes" class="form-control" rows="2" placeholder="Optional notes...">{{ old('notes') }}</textarea>
+                                <label class="form-label fw-bold">{{ __('Notes') }}</label>
+                                <textarea name="notes" class="form-control" rows="2" placeholder="{{ __('Notes (Optional)') }}">{{ old('notes') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -127,26 +127,26 @@
                     {{-- Order Summary Card --}}
                     <div class="card">
                         <div class="card-header bg-light border-0 p-3">
-                            <h5 class="mb-0"><i class="bi bi-receipt text-primary me-2"></i>សរុប</h5>
+                            <h5 class="mb-0"><i class="bi bi-receipt text-primary me-2"></i>{{ __('Total') }}</h5>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Subtotal (USD)</span>
+                                <span class="text-muted">{{ __('Subtotal') }} (USD)</span>
                                 <span class="fw-bold" id="summary-subtotal-usd">$0.00</span>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Subtotal (KHR)</span>
+                                <span class="text-muted">{{ __('Subtotal') }} (KHR)</span>
                                 <span class="fw-bold" id="summary-subtotal-khr">0 ៛</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between fs-4 fw-bolder">
-                                <span>Total</span>
+                                <span>{{ __('Total') }}</span>
                                 <span id="summary-total-usd" class="text-primary">$0.00</span>
                             </div>
                         </div>
                         <div class="card-footer border-0 p-3">
                             <button type="submit" class="btn btn-primary w-100 btn-lg">
-                                <i class="bi bi-check-circle me-2"></i>បង្កើតបញ្ជាទិញ
+                                <i class="bi bi-check-circle me-2"></i>{{ __('Create Order') }}
                             </button>
                         </div>
                     </div>

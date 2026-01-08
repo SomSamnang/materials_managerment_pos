@@ -3,33 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::latest()->paginate(10);
+        $query = Supplier::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('contact_person', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $suppliers = $query->latest()->paginate(10)->withQueryString();
+
         return view('suppliers.index', compact('suppliers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('suppliers.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
@@ -37,26 +42,33 @@ class SupplierController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        Supplier::create($validatedData);
+        Supplier::create($validated);
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'អ្នកផ្គត់ផ្គង់ត្រូវបានបង្កើតដោយជោគជ័យ');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier created successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function show(Supplier $supplier)
+    {
+        // Fetch purchases associated with this supplier (by name)
+        $purchases = Purchase::where('supplier', $supplier->name)
+                             ->with('material')
+                             ->latest('purchase_date')
+                             ->get();
+
+        // Extract unique materials from the purchases
+        $suppliedMaterials = $purchases->pluck('material')->unique('id');
+
+        return view('suppliers.show', compact('supplier', 'purchases', 'suppliedMaterials'));
+    }
+
     public function edit(Supplier $supplier)
     {
         return view('suppliers.edit', compact('supplier'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Supplier $supplier)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
@@ -64,20 +76,17 @@ class SupplierController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        $supplier->update($validatedData);
+        $supplier->update($validated);
 
-        return redirect()->route('suppliers.index')
-            ->with('success', 'អ្នកផ្គត់ផ្គង់ត្រូវបានកែប្រែដោយជោគជ័យ');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Supplier $supplier)
     {
+        // Optional: Check if supplier is used in purchases before deleting
+        // For now, we just delete the record
         $supplier->delete();
-
-        return redirect()->route('suppliers.index')
-            ->with('success', 'អ្នកផ្គត់ផ្គង់ត្រូវបានលុបដោយជោគជ័យ');
+        
+        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted successfully.');
     }
 }

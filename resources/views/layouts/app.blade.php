@@ -146,6 +146,29 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
     .content { margin-left: 0; }
     .sidebar.show { transform: translateX(0); }
 }
+
+@media print {
+    @page {
+        size: landscape;
+        margin: 10mm;
+    }
+    body {
+        background-color: white !important;
+        font-family: 'Times New Roman', Times, serif; /* Professional font for print */
+        color: black !important;
+    }
+    .sidebar, .dashboard-header, .btn, .no-print, .card-footer { display: none !important; }
+    .content { margin-left: 0 !important; padding: 0 !important; }
+    .card { box-shadow: none !important; border: none !important; background: none !important; }
+    .container-fluid { padding: 0 !important; }
+    
+    /* Table Styling for Print */
+    .table { width: 100% !important; border-collapse: collapse !important; font-size: 12px; }
+    .table th, .table td { border: 1px solid #ddd !important; padding: 8px !important; color: black !important; }
+    .table thead th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
+    .badge { border: 1px solid #000; color: #000 !important; background: none !important; padding: 2px 5px; }
+    .text-success, .text-primary, .text-danger { color: black !important; } /* Remove colors for B&W print */
+}
 </style>
 </head>
 <body>

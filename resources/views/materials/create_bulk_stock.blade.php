@@ -4,8 +4,8 @@
 <div class="container-fluid">
     {{-- Page Header --}}
     <div class="mb-4">
-        <h1 class="h3 fw-bold"><i class="bi bi-box-arrow-in-down-left text-primary me-2"></i>បញ្ចូលស្តុកច្រើនមុខ / Bulk Stock Entry</h1>
-        <p class="text-muted">បញ្ចូលស្តុកសម្រាប់សម្ភារៈច្រើនមុខក្នុងពេលតែមួយ។</p>
+        <h1 class="h3 fw-bold"><i class="bi bi-box-arrow-in-down-left text-primary me-2"></i>{{ __('Bulk Stock Entry') }}</h1>
+        <p class="text-muted">{{ __('Enter stock for multiple materials at once.') }}</p>
     </div>
 
     {{-- Flash Messages --}}
@@ -35,9 +35,9 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center p-3">
-                        <h5 class="mb-0"><i class="bi bi-boxes text-primary me-2"></i>សម្ភារៈ / Materials</h5>
+                    <h5 class="mb-0"><i class="bi bi-boxes text-primary me-2"></i>{{ __('Materials') }}</h5>
                         <div class="w-50">
-                            <input type="text" id="material-search" class="form-control" placeholder="ស្វែងរកតាមឈ្មោះ ឬកូដ...">
+                        <input type="text" id="material-search" class="form-control" placeholder="{{ __('Search by name or code...') }}">
                         </div>
                     </div>
                     <div class="card-body p-0" style="max-height: 65vh; overflow-y: auto;">
@@ -46,9 +46,9 @@
                                 <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                                     <tr>
                                         <th>#</th>
-                                        <th class="text-start">ឈ្មោះ</th>
-                                        <th class="text-nowrap">ស្តុកបច្ចុប្បន្ន</th>
-                                        <th style="width: 150px;">បរិមាណត្រូវបញ្ចូល</th>
+                                    <th class="text-start">{{ __('Name') }}</th>
+                                    <th class="text-nowrap">{{ __('Current Stock') }}</th>
+                                    <th style="width: 150px;">{{ __('Quantity to Add') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="materials-tbody">
@@ -73,7 +73,7 @@
                                             <td>
                                                 {{ $material->stock }}
                                                 @if($material->stock < $material->min_stock)
-                                                    <span class="badge bg-danger ms-1">ស្តុកទាប</span>
+                                                <span class="badge bg-danger ms-1">{{ __('Low Stock') }}</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -94,18 +94,18 @@
                 <div style="position: sticky; top: 80px;">
                     <div class="card">
                         <div class="card-header bg-light border-0 p-3">
-                            <h5 class="mb-0"><i class="bi bi-journal-text text-primary me-2"></i>ព័ត៌មានបន្ថែម</h5>
+                        <h5 class="mb-0"><i class="bi bi-journal-text text-primary me-2"></i>{{ __('Additional Info') }}</h5>
                         </div>
                         <div class="card-body">
                             <div>
-                                <label class="form-label fw-bold">កំណត់ចំណាំ</label>
-                                <textarea name="notes" class="form-control" rows="4" placeholder="ឧទាហរណ៍: ការទិញចូលប្រចាំខែ...">{{ old('notes') }}</textarea>
-                                <small class="form-text text-muted">កំណត់ចំណាំនេះសម្រាប់គោលបំណងត្រួតពិនិត្យ។</small>
+                            <label class="form-label fw-bold">{{ __('Notes') }}</label>
+                            <textarea name="notes" class="form-control" rows="4" placeholder="{{ __('Example: Monthly purchase...') }}">{{ old('notes') }}</textarea>
+                            <small class="form-text text-muted">{{ __('This note is for auditing purposes.') }}</small>
                             </div>
                         </div>
                         <div class="card-footer border-0 p-3">
                             <button type="submit" class="btn btn-primary w-100 btn-lg">
-                                <i class="bi bi-check-circle me-2"></i> បញ្ចូលស្តុក
+                            <i class="bi bi-check-circle me-2"></i> {{ __('Add Stock') }}
                             </button>
                         </div>
                     </div>
