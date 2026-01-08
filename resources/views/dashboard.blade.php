@@ -52,10 +52,7 @@
                     <i class="fas fa-user-plus me-2"></i>{{ __('Create User') }}
                 </a>
                 @endif
-                <a href="{{ route('orders.quick_create') }}" class="btn btn-warning">
-                    <i class="bi bi-rocket-takeoff-fill me-2"></i>{{ __('Quick Order') }}
-                </a>
-               
+            
                 @if($isAdmin)
                 <a href="{{ route('materials.stock.create_bulk') }}" class="btn btn-dark">
                     <i class="bi bi-box-arrow-in-down me-2"></i> {{ __('Add Stock') }}

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Users
+    Route::delete('/users/{user}/remove-photo', [UserController::class, 'removePhoto'])->name('users.remove_photo');
     Route::resource('users', UserController::class);
 
     // Profile

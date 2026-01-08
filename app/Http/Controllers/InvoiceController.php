@@ -30,7 +30,11 @@ class InvoiceController extends Controller
                   });
         }
 
-        $invoices = $query->orderByDesc('id')->paginate(10);
+        if ($request->has('show_all')) {
+            $invoices = $query->orderByDesc('id')->get();
+        } else {
+            $invoices = $query->orderByDesc('id')->paginate(10);
+        }
 
         return view('invoices.index', [
             'pageTitle' => 'បញ្ជីវិក្កយបត្រ',

@@ -186,7 +186,7 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
         <li class="nav-item"><a href="{{ route('materials.stock.create_bulk') }}" class="nav-link @if(request()->routeIs('materials.stock.create_bulk')) active @endif"><i class="bi bi-box-arrow-in-down"></i> {{ __('Add Stock') }}</a></li>
         <li class="nav-item"><a href="{{ route('purchases.index') }}" class="nav-link @if(request()->routeIs('purchases.*')) active @endif"><i class="bi bi-cash-coin"></i> {{ __('Purchases') }}</a></li>
         <li class="nav-item"><a href="{{ route('suppliers.index') }}" class="nav-link @if(request()->routeIs('suppliers.*')) active @endif"><i class="bi bi-truck"></i> {{ __('Suppliers') }}</a></li>
-        <li class="nav-item"><a href="{{ route('orders.quick_create') }}" class="nav-link @if(request()->routeIs('orders.quick_create')) active @endif"><i class="bi bi-rocket-takeoff-fill"></i> {{ __('Quick Order') }}</a></li>
+
         <li class="nav-item"><a href="{{ route('orders.index') }}" class="nav-link @if(request()->routeIs('orders.*')) active @endif"><i class="bi bi-receipt"></i> {{ __('Orders') }}</a></li>
         <li class="nav-item"><a href="{{ route('invoices.index') }}" class="nav-link @if(request()->routeIs('invoices.*')) active @endif"><i class="bi bi-file-earmark-text"></i> {{ __('Invoices') }}</a></li>
         

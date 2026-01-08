@@ -327,21 +327,11 @@
             <p><strong>លេខវិក្កយបត្រ:</strong> {{ $invoice->invoice_number }}</p>
             <p><strong>ថ្ងៃចេញវិក្កយបត្រ:</strong> {{ $invoice->issued_date->format('d/m/Y') }}</p>
             <p><strong>ថ្ងៃផុតកំណត់:</strong> {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : 'N/A' }}</p>
-            <p><strong>ស្ថានភាព:</strong>
-                @if($invoice->status == 'paid')
-                    <span class="status-badge status-paid">✅ បានបង់</span>
-                @elseif($invoice->status == 'unpaid')
-                    <span class="status-badge status-unpaid">⏳ មិនទាន់បង់</span>
-                @elseif($invoice->status == 'accepted')
-                    <span class="status-badge status-accepted">📋 បានទទួលយក</span>
-                @else
-                    <span class="status-badge status-overdue">❌ ហួសកំណត់</span>
-                @endif
-            </p>
+      
         </div>
 
         <div class="info-section">
-            <h3>ព័ត៌មានអ្នកទិញ</h3>
+            <h3>ព័ត៌មានអ្នកបញ្ជាទិញ</h3>
             <p><strong>ឈ្មោះ:</strong> {{ $invoice->order->user->name }}</p>
             <p><strong>អ៊ីមែល:</strong> {{ $invoice->order->user->email }}</p>
             <p><strong>តួនាទី:</strong> {{ ucfirst($invoice->order->user->role) }}</p>
@@ -385,20 +375,7 @@
             <span class="total-label">តម្លៃសរុប (KHR):</span>
             <span>{{ number_format($invoice->total_amount_khr) }} ៛</span>
         </div>
-        <div class="total-row">
-            <span class="total-label"><strong>ស្ថានភាពការបង់ប្រាក់:</strong></span>
-            <span>
-                @if($invoice->status == 'paid')
-                    <span class="status-badge status-paid">✅ បានបង់រួចរាល់</span>
-                @elseif($invoice->status == 'unpaid')
-                    <span class="status-badge status-unpaid">⏳ រងចាំការបង់ប្រាក់</span>
-                @elseif($invoice->status == 'accepted')
-                    <span class="status-badge status-accepted">📋 បានទទួលយក</span>
-                @else
-                    <span class="status-badge status-overdue">❌ ហួសកំណត់</span>
-                @endif
-            </span>
-        </div>
+     
     </div>
 
     <div class="footer">

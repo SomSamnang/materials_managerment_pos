@@ -1,103 +1,97 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container my-5">
+<div class="container my-4">
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <div class="card shadow-lg border-0 rounded-4">
-
-                <!-- Card Header -->
-                <div class="card-header bg-gradient-primary text-white text-center py-3 rounded-top-4">
-                    <h4 class="mb-0">បង្កើតអ្នកប្រើថ្មី</h4>
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header text-white p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-person-plus me-2"></i> {{ __('Create New User') }}</h4>
                 </div>
-
-                <!-- Card Body -->
                 <div class="card-body p-4">
-
-                    <!-- Form -->
-                    <form action="{{ route('users.store') }}" method="POST">
+                    <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
                         @csrf
 
-                        <!-- Name -->
-                        <div class="form-floating mb-3">
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="ឈ្មោះ" value="{{ old('name') }}">
-                            <label for="name">ឈ្មោះ</label>
-                            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-floating mb-3">
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email" placeholder="អ៊ីមែល" value="{{ old('email') }}">
-                            <label for="email">អ៊ីមែល</label>
-                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <!-- Password -->
-                        <div class="form-floating mb-3">
-                            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="ពាក្យសម្ងាត់">
-                            <label for="password">ពាក្យសម្ងាត់</label>
-                            @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <!-- Password Confirmation -->
-                        <div class="form-floating mb-3">
-                            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="បញ្ជាក់ពាក្យសម្ងាត់">
-                            <label for="password_confirmation">បញ្ជាក់ពាក្យសម្ងាត់</label>
-                        </div>
-
-                        <!-- Role -->
                         <div class="mb-3">
-                            <label for="role" class="form-label">តួនាទី</label>
-                            <select name="role" id="role" class="form-select @error('role') is-invalid @enderror">
-                                <option value="user" {{ old('role')=='user' ? 'selected' : '' }}>User</option>
-                                <option value="admin" {{ old('role')=='admin' ? 'selected' : '' }}>Admin</option>
+                            <label for="profile_photo" class="form-label fw-bold">{{ __('Profile Photo') }}</label>
+                            <input type="file" class="form-control @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo" accept="image/*">
+                            @error('profile_photo')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">{{ __('Name') }}</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">{{ __('Email') }}</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label fw-bold">{{ __('Phone') }}</label>
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}">
+                            @error('phone')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label fw-bold">{{ __('Role') }}</label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
+                                <option value="user">{{ __('User') }}</option>
+                                <option value="admin">{{ __('Admin') }}</option>
                             </select>
-                            @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            @error('role')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
-                        <!-- Buttons side by side -->
-                        <div class="d-flex gap-2 mt-3">
-                            <button type="submit" class="btn btn-primary flex-grow-1 py-2 shadow-sm">រក្សាទុក</button>
-                            <a href="{{ route('users.index') }}" class="btn btn-outline-secondary flex-grow-1 py-2">ត្រឡប់ក្រោយ</a>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold">{{ __('Password') }}</label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
+                        <div class="mb-4">
+                            <label for="password-confirm" class="form-label fw-bold">{{ __('Confirm Password') }}</label>
+                            <input type="password" class="form-control" id="password-confirm" name="password_confirmation" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> {{ __('Back') }}
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save me-1"></i> {{ __('Save') }}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-/* Gradient Primary for header */
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #0d6efd 0%, #3a8dde 100%);
-}
-
-/* Card hover effect */
-.card:hover {
-    transform: translateY(-5px);
-    transition: all 0.3s ease;
-}
-
-/* Floating label active */
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label {
-    color: #0d6efd;
-    font-weight: 500;
-}
-
-/* Button hover */
-.btn-primary:hover {
-    background-color: #0b5ed7;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-/* Responsive adjustments */
-@media (max-width: 576px) {
-    .card {
-        margin: 0 1rem;
-    }
-}
-</style>
 @endsection

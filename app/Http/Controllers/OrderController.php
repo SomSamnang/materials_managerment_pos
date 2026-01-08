@@ -26,7 +26,11 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $query->orderByDesc('id')->paginate(10);
+        if ($request->has('show_all')) {
+            $orders = $query->orderByDesc('id')->get();
+        } else {
+            $orders = $query->orderByDesc('id')->paginate(10);
+        }
 
         return view('orders.index', [
             'pageTitle' => 'បញ្ជីអ្នកបញ្ជាទិញ',
