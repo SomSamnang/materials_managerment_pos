@@ -199,10 +199,10 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
     <div class="sidebar-footer">
         <div class="d-flex gap-2 mb-3">
             <a href="{{ route('language.switch', 'en') }}" class="btn btn-sm w-100 {{ app()->getLocale() == 'en' ? 'btn-primary' : 'btn-outline-secondary' }}">
-                English
+                {{ __('English') }}
             </a>
             <a href="{{ route('language.switch', 'kh') }}" class="btn btn-sm w-100 {{ app()->getLocale() == 'kh' ? 'btn-primary' : 'btn-outline-secondary' }}">
-                ខ្មែរ
+                {{ __('Khmer') }}
             </a>
         </div>
         <form action="{{ route('logout') }}" method="POST" class="w-100 text-center">
@@ -239,7 +239,7 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
           
             <div class="bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2">
                 <i class="bi bi-clock text-primary"></i>
-                <span class="fw-medium text-secondary">{{ \Carbon\Carbon::now('Asia/Phnom_Penh')->format('h:i A | d M Y') }}</span>
+                <span class="fw-medium text-secondary">{{ \Carbon\Carbon::now('Asia/Phnom_Penh')->locale(app()->getLocale() == 'kh' ? 'km' : 'en')->translatedFormat('h:i A | d M Y') }}</span>
             </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
