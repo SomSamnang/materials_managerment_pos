@@ -197,6 +197,14 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
     </ul>
 
     <div class="sidebar-footer">
+        <div class="d-flex gap-2 mb-3">
+            <a href="{{ route('language.switch', 'en') }}" class="btn btn-sm w-100 {{ app()->getLocale() == 'en' ? 'btn-primary' : 'btn-outline-secondary' }}">
+                English
+            </a>
+            <a href="{{ route('language.switch', 'kh') }}" class="btn btn-sm w-100 {{ app()->getLocale() == 'kh' ? 'btn-primary' : 'btn-outline-secondary' }}">
+                ខ្មែរ
+            </a>
+        </div>
         <form action="{{ route('logout') }}" method="POST" class="w-100 text-center">
             @csrf
             <button type="submit" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2" title="{{ __('Logout') }}">
@@ -216,17 +224,19 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
             </button>
             <h4 class="fw-bold mb-0 text-dark">{{ $pageTitle ?? __('Dashboard') }}</h4>
         </div>
+        
         <div class="d-flex align-items-center gap-3">
             <div class="dropdown">
                 <button class="btn bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-currency-exchange text-success"></i>
-                    <span class="fw-medium text-secondary">{{ session('currency', 'USD') }}</span>
+                    <i class="bi bi-translate text-primary"></i>
+                    <span class="fw-medium text-secondary">{{ app()->getLocale() == 'en' ? 'English' : 'ខ្មែរ' }}</span>
                 </button>
                 <ul class="dropdown-menu border-0 shadow-lg p-2 mt-2" style="border-radius: 12px;">
-                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'USD' ? 'active' : '' }}" href="{{ route('currency.switch', 'USD') }}">USD ($)</a></li>
-                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'KHR' ? 'active' : '' }}" href="{{ route('currency.switch', 'KHR') }}">KHR (៛)</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 {{ app()->getLocale() == 'en' ? 'active' : '' }}" href="{{ route('language.switch', 'en') }}">English</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 {{ app()->getLocale() == 'kh' ? 'active' : '' }}" href="{{ route('language.switch', 'kh') }}">ខ្មែរ</a></li>
                 </ul>
             </div>
+          
             <div class="bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2">
                 <i class="bi bi-clock text-primary"></i>
                 <span class="fw-medium text-secondary">{{ \Carbon\Carbon::now('Asia/Phnom_Penh')->format('h:i A | d M Y') }}</span>

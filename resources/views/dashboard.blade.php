@@ -3,14 +3,16 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <div class="btn-group shadow-sm">
-            <a href="{{ route('language.switch', 'kh') }}" class="btn btn-sm {{ app()->getLocale() == 'kh' ? 'btn-primary' : 'btn-outline-primary' }}">
-                ខ្មែរ
-            </a>
-            <a href="{{ route('language.switch', 'en') }}" class="btn btn-sm {{ app()->getLocale() == 'en' ? 'btn-primary' : 'btn-outline-primary' }}">
-                English
-            </a>
-        </div>
+          <div class="dropdown">
+                <button class="btn bg-white px-3 py-2 rounded-pill shadow-sm border d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-currency-exchange text-success"></i>
+                    <span class="fw-medium text-secondary">{{ session('currency', 'USD') }}</span>
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg p-2 mt-2" style="border-radius: 12px;">
+                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'USD' ? 'active' : '' }}" href="{{ route('currency.switch', 'USD') }}">USD ($)</a></li>
+                    <li><a class="dropdown-item rounded-2 py-2 {{ session('currency', 'USD') == 'KHR' ? 'active' : '' }}" href="{{ route('currency.switch', 'KHR') }}">KHR (៛)</a></li>
+                </ul>
+            </div>
     </div>
 
     {{-- Hero Section --}}
