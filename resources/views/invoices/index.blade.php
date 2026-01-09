@@ -77,10 +77,10 @@
                     <thead class="text-white"
                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <tr>
-                            <th>ID</th>
+                            <th>{{ __('ID') }}</th>
                             <th>{{ __('Invoice Number') }}</th>
                             <th>{{ __('Buyer') }}</th>
-                            <th>{{ __('Total ($)') }}</th>
+                            <th>{{ __('Total Price ($)') }}</th>
                             <th>{{ __('Status') }}</th>
                             <th>{{ __('Issued') }}</th>
                             <th>{{ __('Due') }}</th>

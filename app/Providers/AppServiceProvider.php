@@ -96,6 +96,9 @@ class AppServiceProvider extends ServiceProvider
                 'suppliers.show' => __('Supplier Details'),
                 'suppliers.edit' => __('Edit Supplier'),
 
+                // Settings
+                'settings.edit' => __('System Settings'),
+
                 // Authentication
                 'login' => __('Login'),
                 'register' => __('Register'),

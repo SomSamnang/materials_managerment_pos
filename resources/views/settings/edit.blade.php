@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fas fa-cog me-2 text-primary"></i>ការកំណត់ប្រព័ន្ធ / System Settings</h5>
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-cog me-2 text-primary"></i>{{ __('System Settings') }}</h5>
                 </div>
 
                 <div class="card-body">
@@ -21,7 +21,7 @@
                         @csrf
                         
                         <div class="mb-4">
-                            <label for="exchange_rate" class="form-label fw-bold">អត្រាប្តូរប្រាក់ (1 USD = ? KHR)</label>
+                            <label for="exchange_rate" class="form-label fw-bold">{{ __('Exchange Rate (1 USD = ? KHR)') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">1 USD =</span>
                                 <input type="number" class="form-control @error('exchange_rate') is-invalid @enderror" 
@@ -34,12 +34,12 @@
                                     </span>
                                 @enderror
                             </div>
-                            <div class="form-text text-muted">កំណត់អត្រាប្តូរប្រាក់សម្រាប់គណនាការបង្ហាញតម្លៃជារៀលក្នុងប្រព័ន្ធ។</div>
+                            <div class="form-text text-muted">{{ __('Set the exchange rate for calculating prices shown in Riel in the system.') }}</div>
                         </div>
 
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>រក្សាទុក
+                                <i class="fas fa-save me-2"></i>{{ __('Save') }}
                             </button>
                         </div>
                     </form>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -22,7 +23,7 @@ class ProfileController extends Controller
     public function show()
     {
         return view('profile.show', [
-            'pageTitle' => 'ប្រវត្តិរូប',
+            'pageTitle' => __('Profile'),
             'user' => Auth::user(),
         ]);
     }
@@ -37,15 +38,22 @@ class ProfileController extends Controller
         // Validate only password
         $request->validate([
             'password' => 'nullable|string|min:8|confirmed',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
-            $user->save();
-
-            return redirect()->route('profile.show')->with('success', 'ពាក្យសម្ងាត់ត្រូវបានផ្លាស់ប្តូរ។');
         }
 
-        return redirect()->route('profile.show')->with('success', 'មិនមានការផ្លាស់ប្តូរទេ។');
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $user->profile_photo = $request->file('profile_photo')->store('profile_photos', 'public');
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.show')->with('success', __('Profile updated successfully.'));
     }
 }

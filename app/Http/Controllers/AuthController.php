@@ -26,6 +26,15 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // prevent session fixation
             
+            if (auth()->user()->status === 'banned') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors(['name' => 'គណនីរបស់អ្នកត្រូវបានបិទ។ (Your account has been banned.)']);
+            }
+
+            $request->user()->update(['last_login_at' => now()]);
+
             if (auth()->user()->role === 'admin') {
                 return redirect()->intended(route('dashboard'));
             }

@@ -16,14 +16,14 @@
                         <div class="mb-3">
                             <label for="profile_photo" class="form-label fw-bold">{{ __('Profile Photo') }}</label>
                             <div class="mb-2 d-flex align-items-center">
-                                <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=random' }}" alt="Profile Photo" class="rounded-circle shadow-sm me-3" width="80" height="80" style="object-fit: cover;">
+                                <img id="image-preview" src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=random' }}" alt="Profile Photo" class="rounded-circle shadow-sm me-3" width="80" height="80" style="object-fit: cover;">
                                 @if($user->profile_photo)
                                     <button type="submit" form="remove-photo-form" class="btn btn-outline-danger btn-sm" onclick="return confirm('{{ __('Are you sure?') }}')">
                                         <i class="bi bi-trash me-1"></i> {{ __('Remove') }}
                                     </button>
                                 @endif
                             </div>
-                            <input type="file" class="form-control @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo" accept="image/*">
+                            <input type="file" class="form-control @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo" accept="image/*" onchange="previewImage(event)">
                             @error('profile_photo')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -64,10 +64,24 @@
                         <div class="mb-3">
                             <label for="role" class="form-label fw-bold">{{ __('Role') }}</label>
                             <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
-                                <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>{{ __('User') }}</option>
-                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>{{ __('Admin') }}</option>
+                                <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>{{ __('User') }}</option>
+                                <option value="manager" {{ old('role', $user->role) == 'manager' ? 'selected' : '' }}>{{ __('Manager') }}</option>
+                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>{{ __('Admin') }}</option>
                             </select>
                             @error('role')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label fw-bold">{{ __('Status') }}</label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                                <option value="banned" {{ old('status', $user->status) == 'banned' ? 'selected' : '' }}>{{ __('Banned') }}</option>
+                            </select>
+                            @error('status')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -109,4 +123,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('image-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 @endsection

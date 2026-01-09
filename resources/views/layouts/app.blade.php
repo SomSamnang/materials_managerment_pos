@@ -232,15 +232,13 @@ table tbody tr.table-danger { background-color: rgba(255, 99, 132, 0.2); }
                 <span class="fw-medium text-secondary">{{ \Carbon\Carbon::now('Asia/Phnom_Penh')->format('h:i A | d M Y') }}</span>
             </div>
             <div class="dropdown">
-                <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="text-end d-none d-sm-block">
                         <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ auth()->user()->name ?? 'Guest' }}</div>
                         <div class="text-muted" style="font-size: 0.75rem;">{{ ucfirst(auth()->user()->role ?? 'user') }}</div>
                     </div>
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; font-weight: bold;">
-                        {{ substr(auth()->user()->name ?? 'G', 0, 1) }}
-                    </div>
-                </div>
+                    <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name ?? 'User' }}" class="rounded-circle shadow-sm" width="40" height="40" style="object-fit: cover;">
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 mt-2" style="border-radius: 12px;">
                     <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.75rem;">{{ __('Account') }}</h6></li>
                     <li><a class="dropdown-item rounded-2 py-2 @if(request()->routeIs('profile.show')) active @endif" href="{{ route('profile.show') }}"><i class="bi bi-person me-2"></i> {{ __('Profile') }}</a></li>

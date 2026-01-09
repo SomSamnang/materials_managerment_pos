@@ -14,7 +14,13 @@
 
                         <div class="mb-3">
                             <label for="profile_photo" class="form-label fw-bold">{{ __('Profile Photo') }}</label>
-                            <input type="file" class="form-control @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo" accept="image/*">
+                            <div class="mb-2 d-flex align-items-center">
+                                <img id="image-preview" src="https://ui-avatars.com/api/?name=New+User&background=random" alt="Profile Photo" class="rounded-circle shadow-sm me-3" width="80" height="80" style="object-fit: cover;">
+                                <button type="button" id="remove-photo-btn" class="btn btn-outline-danger btn-sm d-none" onclick="removeImage()">
+                                    <i class="bi bi-trash me-1"></i> {{ __('Remove') }}
+                                </button>
+                            </div>
+                            <input type="file" class="form-control @error('profile_photo') is-invalid @enderror" id="profile_photo" name="profile_photo" accept="image/*" onchange="previewImage(event)">
                             @error('profile_photo')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -55,10 +61,24 @@
                         <div class="mb-3">
                             <label for="role" class="form-label fw-bold">{{ __('Role') }}</label>
                             <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
-                                <option value="user">{{ __('User') }}</option>
-                                <option value="admin">{{ __('Admin') }}</option>
+                                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>{{ __('User') }}</option>
+                                <option value="manager" {{ old('role') == 'manager' ? 'selected' : '' }}>{{ __('Manager') }}</option>
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>{{ __('Admin') }}</option>
                             </select>
                             @error('role')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label fw-bold">{{ __('Status') }}</label>
+                            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                                <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                                <option value="banned" {{ old('status') == 'banned' ? 'selected' : '' }}>{{ __('Banned') }}</option>
+                            </select>
+                            @error('status')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -94,4 +114,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('image-preview').src = e.target.result;
+                document.getElementById('remove-photo-btn').classList.remove('d-none');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function removeImage() {
+        document.getElementById('profile_photo').value = '';
+        document.getElementById('image-preview').src = 'https://ui-avatars.com/api/?name=New+User&background=random';
+        document.getElementById('remove-photo-btn').classList.add('d-none');
+    }
+</script>
 @endsection

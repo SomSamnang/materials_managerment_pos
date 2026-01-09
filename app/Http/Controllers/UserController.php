@@ -12,12 +12,18 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
+        $status = $request->get('status');
+
         $users = User::when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
+            return $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        })->when($status, function ($query, $status) {
+            return $query->where('status', $status);
         })->get();
 
-        return view('users.index', compact('users', 'search'));
+        return view('users.index', compact('users', 'search', 'status'));
     }
 
     public function create()
@@ -32,7 +38,8 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,manager,user',
+            'status' => 'required|in:active,banned',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -41,7 +48,9 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->phone = $request->phone;
         $user->role = $request->role;
+        $user->status = $request->status;
         $user->password = Hash::make($request->password);
+        $user->password_changed_at = now();
 
         if ($request->hasFile('profile_photo')) {
             $user->profile_photo = $request->file('profile_photo')->store('profile_photos', 'public');
@@ -63,7 +72,8 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,manager,user',
+            'status' => 'required|in:active,banned',
             'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -72,9 +82,11 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->phone = $request->phone;
         $user->role = $request->role;
+        $user->status = $request->status;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
+            $user->password_changed_at = now();
         }
 
         if ($request->hasFile('profile_photo')) {

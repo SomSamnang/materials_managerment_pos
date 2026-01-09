@@ -12,15 +12,18 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\PasswordExpirationController;
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login.post');
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login.post');
+});
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Language Switcher
@@ -36,19 +39,32 @@ Route::get('language/{locale}', function ($locale) {
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'password.expired'])->group(function () {
+
+    // Password Expiration Routes
+    Route::get('password/expired', [PasswordExpirationController::class, 'show'])->name('password.expired');
+    Route::post('password/expired', [PasswordExpirationController::class, 'update'])->name('password.update_expired');
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Users
-    Route::delete('/users/{user}/remove-photo', [UserController::class, 'removePhoto'])->name('users.remove_photo');
-    Route::resource('users', UserController::class);
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    
+    Route::middleware('admin')->group(function () {
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::delete('/users/{user}/remove-photo', [UserController::class, 'removePhoto'])->name('users.remove_photo');
+    });
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/remove-photo', [ProfileController::class, 'removePhoto'])->name('profile.remove_photo');
 
     // Stock Items
     Route::prefix('stock-items')->name('stock_items.')->group(function () {
@@ -82,14 +98,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('suppliers', SupplierController::class);
 
     // Settings
-    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
-    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-    Route::get('/currency/switch/{currency}', [SettingController::class, 'switchCurrency'])->name('currency.switch');
+    Route::middleware('admin')->group(function () {
+        Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    });
+    Route::get('/currency/switch/{currency}', [SettingsController::class, 'switchCurrency'])->name('currency.switch');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-});
   // Orders
     // Quick Create Route FIRST to avoid resource conflicts
     Route::get('orders/quick-create', [OrderController::class, 'quickCreate'])->name('orders.quick_create');
