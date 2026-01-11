@@ -17,7 +17,7 @@
 :root {
     --primary-color: #4361ee;
     --secondary-color: #3f37c9;
-    --sidebar-bg: #0f172a;
+    --sidebar-bg: #002974b3;
     --sidebar-width: 280px;
     --text-muted: #94a3b8;
     --bg-body: #f1f5f9;

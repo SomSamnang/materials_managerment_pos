@@ -18,11 +18,16 @@
             </form>
 
         {{-- Add User Button --}}
+        <div class="d-flex gap-2">
+            <button onclick="printAllCards()" class="btn btn-secondary">
+                <i class="bi bi-printer"></i> {{ __('Print All IDs') }}
+            </button>
         @can('admin')
         <a href="{{ route('users.create') }}" class="btn btn-success">
             <i class="bi bi-person-plus"></i> {{ __('Create User') }}
         </a>
         @endcan
+        </div>
     </div>
 
         {{-- Users Table --}}
@@ -69,6 +74,21 @@
                             <td>{{ $user->last_login_at ? $user->last_login_at->timezone('Asia/Phnom_Penh')->format('d F Y | h:i A') : '-' }}</td>
                             @can('admin')
                             <td class="d-flex justify-content-center gap-1">
+                                {{-- Print ID Card Button --}}
+                                <button type="button" class="btn btn-sm btn-info text-white" 
+                                    onclick="openPrintModal(this)"
+                                    data-name="{{ $user->name }}"
+                                    data-role="{{ ucfirst($user->role) }}"
+                                    data-photo="{{ $user->profile_photo_url }}"
+                                    data-id="{{ $user->id }}"
+                                    data-email="{{ $user->email }}"
+                                    data-phone="{{ $user->phone ?? '-' }}"
+                                    data-joined="{{ $user->created_at->format('d M Y') }}"
+                                    data-status="{{ ucfirst($user->status) }}"
+                                    data-url="{{ route('users.edit', $user->id) }}"
+                                    title="{{ __('Print ID Card') }}">
+                                    <i class="bi bi-person-badge"></i>
+                                </button>
                                 {{-- Edit Button --}}
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning text-white" title="{{ __('Edit') }}">
                                     <i class="bi bi-pencil-square"></i>
@@ -121,4 +141,7 @@
             background-color: rgba(0, 0, 0, 0.03);
         }
     </style>
+    
+    {{-- Include Print Resources (Modal, Scripts, Styles) --}}
+    @include('users.print_resources')
     @endsection
