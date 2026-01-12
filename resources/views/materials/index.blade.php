@@ -30,6 +30,14 @@
         </div>
     </form>
 
+    {{-- Success Alert --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     {{-- Low stock alert --}}
     @if($lowStockCount > 0)
         <div class="alert alert-danger shadow-sm d-flex align-items-center">
@@ -225,6 +233,9 @@
     opacity: 0.6;
     filter: grayscale(100%);
 }
+.alert.fade {
+    transition: opacity 1s ease-in-out;
+}
 </style>
 
 <script>
@@ -236,6 +247,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const bulkActionModal = new bootstrap.Modal(document.getElementById('bulkActionModal'));
     const confirmBtn = document.getElementById('confirmBulkAction');
     const bulkForm = document.getElementById('bulkActionForm');
+
+    // Auto-dismiss success alert after 1 second
+    const successAlert = document.querySelector('.alert-success');
+    if (successAlert) {
+        setTimeout(function() {
+            const alert = bootstrap.Alert.getOrCreateInstance(successAlert);
+            alert.close();
+        }, 1000);
+    }
 
     // Select All Logic
     selectAll.addEventListener('change', function() {
